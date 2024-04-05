@@ -13,7 +13,7 @@ public class ShortestQueueStrategy implements Strategy {
 
         for(Server serverComp : servers) {
             int currentQueueSize = serverComp.getQueueSize();
-            if(currentQueueSize < smallestSize) {
+            if(currentQueueSize < smallestSize && server.getRemainingCapacity() > 0) {
                 smallestSize = currentQueueSize;
                 server = serverComp;
             }

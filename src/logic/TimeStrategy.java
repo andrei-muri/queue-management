@@ -13,18 +13,11 @@ public class TimeStrategy implements Strategy {
 
         for(int i = 1; i < servers.size(); i++) {
             int currentWaitingTime = servers.get(i).getWaitingPeriod().intValue();
-            if(currentWaitingTime < smallestWaitingTime) {
+            if(currentWaitingTime < smallestWaitingTime && server.getRemainingCapacity() > 0) {
                 smallestWaitingTime = currentWaitingTime;
                 server = servers.get(i);
             }
         }
-//        for(Server serverComp : servers) {
-//            int currentWaitingTime = serverComp.getWaitingPeriod().intValue();
-//            if(currentWaitingTime < smallestWaitingTime) {
-//                smallestWaitingTime = currentWaitingTime;
-//                server = serverComp;
-//            }
-//        }
 
         server.addTask(task);
     }

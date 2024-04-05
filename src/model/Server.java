@@ -70,12 +70,16 @@ public class Server implements Runnable {
             }
         }
         this.averageWaitingTime = waitingTimes.stream().mapToDouble(Integer::doubleValue).average().orElse(0.0);
+        //System.out.println(averageWaitingTime);
     }
 
     public int getQueueSize() {
         return (tasks != null) ? tasks.size() : 0;
     }
 
+    public int getRemainingCapacity() {
+        return tasks.remainingCapacity();
+    }
     @Override
     public String toString() {
         StringBuilder string = new StringBuilder();
@@ -97,5 +101,9 @@ public class Server implements Runnable {
 
     public AtomicInteger getWaitingPeriod() {
         return (tasks.isEmpty()) ? new AtomicInteger(0) : new AtomicInteger(waitingPeriod.intValue() + 1);
+    }
+
+    public double getAverageWaitingTime() {
+        return averageWaitingTime;
     }
 }
