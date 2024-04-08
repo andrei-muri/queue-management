@@ -33,6 +33,12 @@ public class Scheduler {
         }
     }
 
+    public void notifyServers() {
+        for(Server server : servers) {
+            server.timedExecute();
+        }
+    }
+
     public void dispatchTask(Task task) {
         strategy.addTask(servers, task);
     }

@@ -25,7 +25,7 @@ public class SimulationManager implements Runnable{
         scheduler = new Scheduler(numberOfServers, 100);
         scheduler.setStrategy(policy);
         scheduler.start();
-        tasks = new ArrayList<>(List.of(
+        tasks = new ArrayList<>(//List.of(
 //                new Task(1, 2, 9),
 //                new Task(2, 2, 1),
 //                new Task(3, 2, 2),
@@ -39,10 +39,10 @@ public class SimulationManager implements Runnable{
 //                new Task(11, 7, 8),
 //                new Task(12, 8, 8)
 
-                new Task(1, 2, 2),
-                new Task(2, 3, 3),
-                new Task(3, 4, 3),
-                new Task(4, 10, 2)
+//                new Task(1, 2, 2),
+//                new Task(2, 3, 3),
+//                new Task(3, 4, 3),
+//                new Task(4, 10, 2)
 
 //                new Task(1, 5, 2),
 //                new Task(2, 6, 4),
@@ -53,7 +53,7 @@ public class SimulationManager implements Runnable{
 //                new Task(2, 4, 2),
 //                new Task(3, 5, 4),
 //                new Task(4, 9, 2)
-        ));;
+        );;
         //generateNRandomTasks();
     }
 
@@ -97,6 +97,7 @@ public class SimulationManager implements Runnable{
 
     @Override
     public void run() {
+        generateNRandomTasks();
         int currentTime = 0;
         while(currentTime < timeLimit) {
             if(!tasks.isEmpty()) {
@@ -113,8 +114,9 @@ public class SimulationManager implements Runnable{
             }
             printState(currentTime);
             currentTime++;
+            scheduler.notifyServers();
             try {
-                Thread.sleep(1000);
+                Thread.sleep(100);
             } catch(InterruptedException e) {
                 throw new RuntimeException(e);
             }
