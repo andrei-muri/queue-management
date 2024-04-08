@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.stream.Collector;
 
 public class SimulationManager implements Runnable{
-    public int timeLimit = 60;
+    public int timeLimit = 15;
     public int maxProcessingTime = 4;
     public int minProcessingTime = 2;
     public int maxArrivalTime = 30;
@@ -25,7 +25,7 @@ public class SimulationManager implements Runnable{
         scheduler = new Scheduler(numberOfServers, 100);
         scheduler.setStrategy(policy);
         scheduler.start();
-        tasks = new ArrayList<>(//List.of(
+        tasks = new ArrayList<>(List.of(
 //                new Task(1, 2, 9),
 //                new Task(2, 2, 1),
 //                new Task(3, 2, 2),
@@ -39,10 +39,10 @@ public class SimulationManager implements Runnable{
 //                new Task(11, 7, 8),
 //                new Task(12, 8, 8)
 
-//                new Task(1, 2, 2),
-//                new Task(2, 3, 3),
-//                new Task(3, 4, 3),
-//                new Task(4, 10, 2)
+                new Task(1, 2, 2),
+                new Task(2, 3, 3),
+                new Task(3, 4, 3),
+                new Task(4, 10, 2)
 
 //                new Task(1, 5, 2),
 //                new Task(2, 6, 4),
@@ -53,8 +53,8 @@ public class SimulationManager implements Runnable{
 //                new Task(2, 4, 2),
 //                new Task(3, 5, 4),
 //                new Task(4, 9, 2)
-        );;
-        generateNRandomTasks();
+        ));;
+        //generateNRandomTasks();
     }
 
     private void printState(int time) {
@@ -77,8 +77,8 @@ public class SimulationManager implements Runnable{
 
     private void printAverageWaitTime() {
         List<Server> servers = scheduler.getServers();
-        /*double sum =*/ servers.stream().mapToDouble(Server::getAverageWaitingTime).forEach(System.out::println);
-        //System.out.printf("Total average is: %.2f Average waiting time is: %.2f\n", sum, sum / (double)numberOfServers);
+        double sum = servers.stream().mapToDouble(Server::getAverageWaitingTime).sum();
+        System.out.printf("Total average is: %.2f Average waiting time is: %.2f\n", sum, sum / (double)numberOfServers);
     }
 
     private void generateNRandomTasks() {
@@ -120,6 +120,11 @@ public class SimulationManager implements Runnable{
             }
         }
         scheduler.end();
+        try {
+            Thread.sleep(1000);
+        } catch(InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         printAverageWaitTime();
         Thread.currentThread().interrupt();
     }
