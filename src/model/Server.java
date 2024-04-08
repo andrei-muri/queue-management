@@ -5,12 +5,13 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Server implements Runnable {
     private final BlockingQueue<Task> tasks;
-    private final AtomicInteger waitingPeriod;
+    private AtomicInteger waitingPeriod;
     private double averageWaitingTime;
-    private final AtomicInteger tasksNo;
+    private AtomicInteger tasksNo;
 
     public Server(int maxTask) {
         this.tasks = new ArrayBlockingQueue<>(maxTask);
@@ -21,6 +22,7 @@ public class Server implements Runnable {
     public void addTask(Task task) {
         try {
             tasks.put(task);
+            //System.out.println("Task successfully added: " + task);
             tasksNo.getAndIncrement();
         } catch(InterruptedException e) {
             System.out.println("Thread interrupted while trying to put element in queue");
@@ -29,42 +31,24 @@ public class Server implements Runnable {
         waitingPeriod.getAndAdd(task.getServiceTime());
     }
 
+    public void endThread() {
+        try {
+            Thread.sleep(20);
+            tasks.put(new Task(-1, -1, -1));
+
+        } catch(InterruptedException e) {
+            System.out.println("Thread interrupted while trying to put the end element in queue");
+            Thread.currentThread().interrupt();
+        }
+    }
+
     @Override
     public void run() {
 
-        while(!Thread.currentThread().isInterrupted()) {
-            if(!tasks.isEmpty()) {
-                Task peek = this.tasks.peek();
-                int time = 0;
-                while(peek.getServiceTime() != 0) {
-                    peek.decrementServiceTime();
-                    waitingPeriod.getAndDecrement();
-                    time++;
-                    try {
-                        Thread.sleep(1000);
-                    } catch(InterruptedException e) {
-                        System.out.println("Thread interrupted while waiting");
-                        Thread.currentThread().interrupt();
-                        break;
-                    }
-                }
-                if(Thread.currentThread().isInterrupted()) {
-                    break;
-                }
-                tasks.poll();
-                tasksNo.getAndDecrement();
-                waitingTimes.add(time);
-
-            }
-        }
-        System.out.println(Thread.currentThread().getName() + "waiting times");
-        waitingTimes.stream().mapToDouble(Integer::doubleValue).forEach((t) -> System.out.print(" " + t));
-        this.averageWaitingTime = waitingTimes.stream().mapToDouble(Integer::doubleValue).average().orElse(0.0);
-        System.out.println(averageWaitingTime);
     }
 
     public int getQueueSize() {
-        return (!tasks.isEmpty()) ? tasks.size() : 0;
+        return (tasks != null) ? tasks.size() : 0;
     }
 
     public int getRemainingCapacity() {
@@ -83,6 +67,7 @@ public class Server implements Runnable {
                 string.append(String.format("(%d, %d, %d); ", task.getID(), task.getArrivalTime(), task.getServiceTime()));
             }
         }
+        //string.append(String.format(" Waiting period: %d", waitingPeriod.intValue() + 1));
 
         return string.toString();
     }
