@@ -31,7 +31,7 @@ public class Server implements Runnable {
 
     @Override
     public void run() {
-        List<Integer> waitingTimes = new ArrayList<>();
+
         while(!Thread.currentThread().isInterrupted()) {
             if(!tasks.isEmpty()) {
                 Task peek = this.tasks.peek();
@@ -61,10 +61,6 @@ public class Server implements Runnable {
         waitingTimes.stream().mapToDouble(Integer::doubleValue).forEach((t) -> System.out.print(" " + t));
         this.averageWaitingTime = waitingTimes.stream().mapToDouble(Integer::doubleValue).average().orElse(0.0);
         System.out.println(averageWaitingTime);
-    }
-
-    public void akds() {
-        System.out.println();
     }
 
     public int getQueueSize() {
