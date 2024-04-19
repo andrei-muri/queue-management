@@ -10,8 +10,8 @@ import java.util.List;
 public class Scheduler {
     private final List<Server> servers;
     private final List<Thread> threads;
-    private int maxNoServers;
-    private int maxTasksPerServer;
+    private int peakHour = 0;
+    private int peakNumberOfClients = 0;
     private Strategy strategy;
 
     public Scheduler(int maxNoServers, int maxTasksPerServer) {
@@ -39,8 +39,32 @@ public class Scheduler {
         }
     }
 
+    public void computePeakHour(int time) {
+        int totalSize = servers.stream().mapToInt(Server::getSize).sum();
+        if(totalSize > peakNumberOfClients) {
+            peakNumberOfClients = totalSize;
+            peakHour = time - 1;
+        }
+    }
+
+    public int getTotalWaitingTime() {
+        int sum = 0;
+        for(Server server : servers) {
+            sum += server.getTasks().stream().mapToInt(Task::getTotalWaitingTime).sum();
+        }
+        return sum;
+    }
+
     public void dispatchTask(Task task) {
         strategy.addTask(servers, task);
+    }
+
+    public void incrementWaitingTimes() {
+        for(Server server : servers) {
+            for(Task task : server.getCurrentTasks()) {
+                task.incrementWaitingTime();
+            }
+        }
     }
 
     public void start() {
@@ -57,5 +81,13 @@ public class Scheduler {
 
     public List<Server> getServers() {
         return servers;
+    }
+
+    public int getPeakHour() {
+        return peakHour;
+    }
+
+    public int getPeakNumberOfClients() {
+        return peakNumberOfClients;
     }
 }

@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Server implements Runnable {
     private final BlockingQueue<Task> tasks;
+    private final List<Task> discardedTasks;
     private AtomicInteger waitingPeriod;
     private double averageWaitingTime;
     private AtomicInteger tasksNo;
@@ -19,6 +20,7 @@ public class Server implements Runnable {
         this.tasks = new ArrayBlockingQueue<>(maxTask);
         this.waitingPeriod = new AtomicInteger(0);
         this.tasksNo = new AtomicInteger(0);;
+        this.discardedTasks = new ArrayList<>();
     }
 
     public void addTask(Task task) {
@@ -70,7 +72,7 @@ public class Server implements Runnable {
                     waitingTime++;
                 }  else {
                     //System.out.println(Thread.currentThread().getName() + " id: " + peek.getID() + " " + waitingTime);
-                    tasks.poll();
+                    discardedTasks.add(tasks.poll());
                     tasksNo.getAndDecrement();
                     waitingTimes.add(waitingTime);
 
@@ -78,8 +80,6 @@ public class Server implements Runnable {
                 }
             }
         }
-        this.averageWaitingTime = waitingTimes.stream().mapToDouble(Integer::doubleValue).average().orElse(0.0);
-        System.out.println(this.averageWaitingTime);
     }
 
     //    @Override
@@ -146,5 +146,17 @@ public class Server implements Runnable {
 
     public double getAverageWaitingTime() {
         return averageWaitingTime;
+    }
+
+    public int getSize() {
+        return tasks.size();
+    }
+
+    public List<Task> getTasks() {
+        return discardedTasks;
+    }
+
+    public BlockingQueue<Task> getCurrentTasks() {
+        return tasks;
     }
 }

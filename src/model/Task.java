@@ -4,11 +4,13 @@ public class Task {
     private final int ID;
     private final int arrivalTime;
     private int serviceTime;
+    private int totalWaitingTime;
 
     public Task(int ID, int arrivalTime, int serviceTime) {
         this.ID = ID;
         this.arrivalTime = arrivalTime;
         this.serviceTime = serviceTime;
+        this.totalWaitingTime = 0;
     }
 
     public int getArrivalTime() {
@@ -27,6 +29,14 @@ public class Task {
         if(this.serviceTime != 0) {
             this.serviceTime--;
         }
+    }
+
+    public void incrementWaitingTime() {
+        this.totalWaitingTime++;
+    }
+
+    public int getTotalWaitingTime() {
+        return this.totalWaitingTime;
     }
 
     @Override
