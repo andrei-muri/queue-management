@@ -28,4 +28,4 @@ bin/
 ### Mac OS ###
 .DS_Store
 
-/src/simulation_results.txt
+/simulation_results.txt
