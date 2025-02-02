@@ -1,4 +1,5 @@
 ### IntelliJ IDEA ###
+.idea/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
@@ -29,3 +30,7 @@ bin/
 .DS_Store
 
 /simulation_results.txt
+
+PT2024_Documentation_Muresan_Andrei_Assignement_2.doc
+PT2024_Muresan_Andrei_30425_Assignement_2.iml
+PT2024_Muresan_Andrei_30425_Assignement_2.vpdm/
